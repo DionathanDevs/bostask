@@ -1,0 +1,68 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)" (keydown)="onKeydown($event)" tabindex="-1">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+
+    <div class="modal__header">
+      <h2 class="modal__title" id="edit-modal-title">Edit Task</h2>
+      <button class="modal__close" (click)="close.emit()" aria-label="Close modal">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <form class="modal__form" (ngSubmit)="onSubmit()" novalidate>
+
+      <div class="form-field">
+        <label class="form-field__label" for="edit-title">Title <span class="form-field__required">*</span></label>
+        <input class="form-field__input" id="edit-title" type="text"
+               [(ngModel)]="title" name="title" required autofocus autocomplete="off">
+      </div>
+
+      <div class="form-field">
+        <label class="form-field__label" for="edit-desc">Description</label>
+        <textarea class="form-field__input form-field__input--textarea"
+                  id="edit-desc" [(ngModel)]="description" name="description" rows="3"></textarea>
+      </div>
+
+      <div class="modal__row">
+        <div class="form-field">
+          <label class="form-field__label" for="edit-tag">Tag</label>
+          <select class="form-field__select" id="edit-tag" [(ngModel)]="tag" name="tag">
+            @for (t of tags; track t.id) {
+              <option [value]="t.id">{{ t.icon }} {{ t.label }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="edit-column">Column</label>
+          <select class="form-field__select" id="edit-column" [(ngModel)]="column" name="column">
+            @for (col of columns; track col.id) {
+              <option [value]="col.id">{{ col.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="form-field__label">Priority</label>
+        <div class="priority-group" role="group">
+          @for (p of priorities; track p.value) {
+            <button type="button" class="priority-btn"
+                    [class.priority-btn--active]="priority === p.value"
+                    [attr.data-priority]="p.value"
+                    (click)="priority = p.value">
+              {{ p.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--secondary" (click)="close.emit()">Cancel</button>
+        <button type="submit" class="btn btn--primary" [disabled]="!title.trim()">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>

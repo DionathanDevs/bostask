@@ -1,0 +1,180 @@
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-stroke-muted);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  cursor: grab;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+              transform var(--transition-fast);
+  position: relative;
+
+  // Offset sketch shadow (DESIGN.md: "Offset Stroke-Shadows")
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-md);
+    box-shadow: 3px 3px 0 var(--color-stroke-muted);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+    pointer-events: none;
+  }
+
+  &:hover {
+    border-color: var(--color-stroke-primary);
+
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    cursor: grabbing;
+    transform: rotate(-0.5deg);
+  }
+
+  // Priority left-border accent (stroke-based, no color)
+  &[data-priority='high'] {
+    border-left: 3px solid var(--color-stroke-primary);
+  }
+
+  &[data-priority='medium'] {
+    border-left: 2px solid var(--color-stroke-muted);
+  }
+
+  &[data-priority='low'] {
+    border-left: 1px solid var(--color-stroke-muted);
+    opacity: 0.85;
+  }
+
+  // ── Header ─────────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-1);
+  }
+
+  &__tag {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-low);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  &__tag-icon {
+    font-size: 10px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+  }
+
+  &:hover &__actions {
+    opacity: 1;
+  }
+
+  &__action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-low);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast),
+                border-color var(--transition-fast);
+
+    &:hover {
+      background-color: var(--color-surface-high);
+      color: var(--color-text-high);
+      border-color: var(--color-stroke-muted);
+    }
+
+    &--danger:hover {
+      color: var(--color-error);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-stroke-primary);
+      outline-offset: 2px;
+    }
+  }
+
+  // ── Title ──────────────────────────────────────────────
+  &__title {
+    font-family: var(--font-headline);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-high);
+    line-height: 1.35;
+    margin: 0;
+  }
+
+  // ── Description ────────────────────────────────────────
+  &__desc {
+    font-size: 13px;
+    color: var(--color-text-low);
+    line-height: 1.5;
+
+    // Clamp to 2 lines
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  // ── Footer ─────────────────────────────────────────────
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 6px;
+    margin-top: 6px;
+    border: none;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--color-stroke-muted) 20%,
+        var(--color-stroke-muted) 80%,
+        transparent 100%
+      );
+      opacity: 0.4;
+    }
+  }
+
+  &__priority {
+    font-size: 11px;
+    color: var(--color-text-low);
+    font-family: var(--font-body);
+    letter-spacing: 0.02em;
+
+    &[data-priority='high'] {
+      color: var(--color-text-mid);
+      font-weight: 600;
+    }
+  }
+}

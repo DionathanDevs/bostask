@@ -1,0 +1,269 @@
+// Edit task modal — inherits same visual language as add-task-modal
+// All shared styles are defined here to keep the component self-contained.
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: var(--space-3);
+  animation: backdrop-in 200ms ease;
+
+  @media (max-width: 768px) {
+    align-items: flex-end;
+    padding: 0;
+  }
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes sheet-in {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.modal {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-stroke-muted);
+  border-radius: var(--radius-lg);
+  box-shadow: 4px 4px 0 var(--color-stroke-muted);
+  animation: modal-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+
+  @keyframes modal-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: none;
+    box-shadow: none;
+    animation: sheet-in 280ms cubic-bezier(0.16, 1, 0.3, 1);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3);
+    border-bottom: 1px solid var(--color-stroke-muted);
+  }
+
+  &__title {
+    font-family: var(--font-headline);
+    font-size: 18px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--color-text-high);
+    letter-spacing: -0.02em;
+  }
+
+  &__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-low);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      background: var(--color-surface-high);
+      color: var(--color-text-high);
+      border-color: var(--color-stroke-muted);
+    }
+  }
+
+  &__form {
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-1);
+    padding-top: var(--space-2);
+    margin-top: 4px;
+    border: none;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--color-stroke-muted) 20%,
+        var(--color-stroke-muted) 80%,
+        transparent 100%
+      );
+      opacity: 0.35;
+    }
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-low);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  &__required {
+    color: var(--color-error);
+    margin-left: 2px;
+  }
+
+  &__input,
+  &__select {
+    background: var(--color-surface-low);
+    border: 1px solid var(--color-stroke-muted);
+    border-radius: var(--radius-md);
+    color: var(--color-text-high);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 8px var(--space-2);
+    outline: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    width: 100%;
+
+    &::placeholder { color: var(--color-text-low); }
+
+    &:focus {
+      border-color: var(--color-stroke-primary);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.04);
+    }
+  }
+
+  &__input--textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+  }
+
+  &__select {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239c9b9b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+
+    option {
+      background: var(--color-surface);
+      color: var(--color-text-high);
+    }
+  }
+}
+
+.priority-group {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.priority-btn {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid var(--color-stroke-muted);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-low);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+
+  &:hover {
+    border-color: var(--color-stroke-primary);
+    color: var(--color-text-high);
+    background: var(--color-surface-high);
+  }
+
+  &--active {
+    background: var(--color-surface-high);
+    border-color: var(--color-stroke-primary);
+    color: var(--color-text-high);
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    background: var(--color-text-high);
+    color: var(--color-bg);
+    border-color: var(--color-stroke-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--color-primary);
+      box-shadow: 2px 2px 0 var(--color-stroke-muted);
+    }
+  }
+
+  &--secondary {
+    background: transparent;
+    color: var(--color-text-mid);
+    border-color: var(--color-stroke-muted);
+
+    &:hover {
+      background: var(--color-surface-high);
+      color: var(--color-text-high);
+      border-color: var(--color-stroke-primary);
+    }
+  }
+}

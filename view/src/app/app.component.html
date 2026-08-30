@@ -1,0 +1,41 @@
+<div class="app" [attr.data-theme]="themeService.theme()">
+
+  <!-- Top header -->
+  <bsk-header />
+
+  <!-- Body: sidebar + main -->
+  <div class="app__body">
+
+    <!-- Sidebar with tag navigation -->
+    <bsk-sidebar (tagSelected)="onTagChange($event)" />
+
+    <!-- Main area -->
+    <main class="app__main">
+
+      <!-- Toolbar -->
+      <div class="app__toolbar">
+        <div class="app__toolbar-info">
+          <span class="app__toolbar-label">Board</span>
+        </div>
+        <button class="app__add-btn" (click)="showAddModal.set(true)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          New Task
+        </button>
+      </div>
+
+      <!-- Kanban board -->
+      <div class="app__board-wrap">
+        <bsk-board [activeTag]="activeTag()" />
+      </div>
+    </main>
+  </div>
+
+  <!-- Add task modal -->
+  @if (showAddModal()) {
+    <bsk-add-task-modal (close)="showAddModal.set(false)" />
+  }
+</div>

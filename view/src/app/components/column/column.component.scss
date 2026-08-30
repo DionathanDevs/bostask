@@ -1,0 +1,125 @@
+.column {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  min-width: 280px;
+  height: 100%;
+
+  &__header {
+    padding: 0 0 var(--space-2);
+    flex-shrink: 0;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-bottom: var(--space-1);
+  }
+
+  &__title {
+    font-family: var(--font-headline);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-low);
+  }
+
+  &__count {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-low);
+    background: var(--color-surface-high);
+    border: 1px solid var(--color-stroke-muted);
+    border-radius: var(--radius-full);
+    padding: 1px 7px;
+    line-height: 1.6;
+  }
+
+  &__divider {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--color-stroke-muted) 25%,
+      var(--color-stroke-muted) 75%,
+      transparent 100%
+    );
+    opacity: 0.3;
+    margin-top: 2px;
+  }
+
+  // CDK Drop List
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-1) 2px var(--space-2);
+    min-height: 80px;
+
+    &.cdk-drop-list-receiving {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: var(--radius-md);
+    }
+  }
+
+  &__drag-item {
+    position: relative;
+  }
+
+  &__drag-placeholder {
+    height: 80px;
+    border: 1.5px solid var(--color-stroke-muted);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-low);
+    opacity: 0.4;
+  }
+
+  // Empty state
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: var(--space-4) var(--space-2);
+    opacity: 0.45;
+  }
+
+  &__empty-icon {
+    font-size: 24px;
+    color: var(--color-text-low);
+  }
+
+  &__empty-text {
+    font-size: 13px;
+    color: var(--color-text-low);
+    font-family: var(--font-body);
+  }
+
+  // Column accent per id
+  &[data-column='inprogress'] .column__title {
+    color: var(--color-text-mid);
+  }
+
+  &[data-column='done'] .column__title {
+    color: var(--color-text-low);
+  }
+
+  &[data-column='done'] .column__divider {
+    opacity: 0.2;
+  }
+
+  // ── Mobile ───────────────────────────────────────────────
+  @media (max-width: 768px) {
+    // Each column takes ~88vw so the next one peeks slightly
+    width: 88vw;
+    min-width: 88vw;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    height: 100%;
+  }
+}

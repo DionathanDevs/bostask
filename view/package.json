@@ -1,0 +1,37 @@
+{
+  "name": "bostask",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "ng": "ng",
+    "prestart": "if exist \"%USERPROFILE%\\.pnp.cjs\" ren \"%USERPROFILE%\\.pnp.cjs\" .pnp.cjs.bak",
+    "start": "ng serve",
+    "poststart": "if exist \"%USERPROFILE%\\.pnp.cjs.bak\" ren \"%USERPROFILE%\\.pnp.cjs.bak\" .pnp.cjs",
+    "prebuild": "if exist \"%USERPROFILE%\\.pnp.cjs\" ren \"%USERPROFILE%\\.pnp.cjs\" .pnp.cjs.bak",
+    "build": "ng build",
+    "postbuild": "if exist \"%USERPROFILE%\\.pnp.cjs.bak\" ren \"%USERPROFILE%\\.pnp.cjs.bak\" .pnp.cjs",
+    "watch": "ng build --watch --configuration development"
+  },
+  "dependencies": {
+    "@angular/animations": "^17.3.0",
+    "@angular/cdk": "^17.3.0",
+    "@angular/common": "^17.3.0",
+    "@angular/compiler": "^17.3.0",
+    "@angular/core": "^17.3.0",
+    "@angular/forms": "^17.3.0",
+    "@angular/platform-browser": "^17.3.0",
+    "@angular/platform-browser-dynamic": "^17.3.0",
+    "@angular/router": "^17.3.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.6.0",
+    "zone.js": "~0.14.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^17.3.0",
+    "@angular/cli": "^17.3.0",
+    "@angular/compiler-cli": "^17.3.0",
+    "@types/uuid": "^9.0.0",
+    "typescript": "~5.4.0"
+  }
+}

@@ -1,0 +1,26 @@
+<nav class="sidebar">
+  <!-- Branding subtitle -->
+  <p class="sidebar__section-label">Views</p>
+
+  <!-- Tag list -->
+  <ul class="sidebar__list" role="list">
+    @for (tag of tags; track tag.id) {
+      <li class="sidebar__item">
+        <button
+          class="sidebar__btn"
+          [class.sidebar__btn--active]="activeTag() === tag.id"
+          (click)="selectTag(tag.id)"
+        >
+          <span class="sidebar__btn-icon">{{ tag.icon }}</span>
+          <span class="sidebar__btn-label">{{ tag.label }}</span>
+          <span class="sidebar__btn-count">{{ taskCountForTag(tag.id) }}</span>
+        </button>
+      </li>
+    }
+  </ul>
+
+  <!-- Footer -->
+  <div class="sidebar__footer">
+    <span class="sidebar__footer-text">◈ bostask v1</span>
+  </div>
+</nav>

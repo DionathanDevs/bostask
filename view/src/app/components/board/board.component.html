@@ -1,0 +1,23 @@
+<div class="board">
+  <bsk-column
+    [columnId]="'todo'"
+    [tasks]="tasksByColumn.todo"
+    [activeTag]="activeTag"
+    [connectedTo]="connectedTo"
+    (taskDropped)="onDrop($event, 'todo')"
+  />
+  <bsk-column
+    [columnId]="'inprogress'"
+    [tasks]="tasksByColumn.inprogress"
+    [activeTag]="activeTag"
+    [connectedTo]="connectedTo"
+    (taskDropped)="onDrop($event, 'inprogress')"
+  />
+  <bsk-column
+    [columnId]="'done'"
+    [tasks]="tasksByColumn.done"
+    [activeTag]="activeTag"
+    [connectedTo]="connectedTo"
+    (taskDropped)="onDrop($event, 'done')"
+  />
+</div>

@@ -1,0 +1,89 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--color-stroke-muted);
+  background-color: var(--color-bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  &__logo-mark {
+    font-size: 20px;
+    color: var(--color-text-high);
+    line-height: 1;
+  }
+
+  &__logo-text {
+    font-family: var(--font-headline);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-text-high);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  &__theme-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--color-stroke-muted);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-mid);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), color var(--transition-fast),
+                background-color var(--transition-fast);
+
+    &:hover {
+      border-color: var(--color-stroke-primary);
+      color: var(--color-text-high);
+      background-color: var(--color-surface);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-stroke-primary);
+      outline-offset: 2px;
+    }
+  }
+
+  &__theme-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // ── Mobile ───────────────────────────────────────────────
+  @media (max-width: 768px) {
+    height: 48px;
+    padding: 0 var(--space-2);
+
+    &__logo-text {
+      font-size: 16px;
+    }
+
+    &__logo-mark {
+      font-size: 17px;
+    }
+
+    &__theme-btn {
+      width: 32px;
+      height: 32px;
+    }
+  }
+}

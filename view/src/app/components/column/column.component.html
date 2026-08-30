@@ -1,0 +1,49 @@
+<div class="column" [attr.data-column]="columnId">
+
+  <!-- Column header -->
+  <div class="column__header">
+    <div class="column__title-row">
+      <h2 class="column__title">{{ label }}</h2>
+      <span class="column__count">{{ taskCount }}</span>
+    </div>
+    <div class="column__divider"></div>
+  </div>
+
+  <!-- Drop list -->
+  <div
+    class="column__body"
+    cdkDropList
+    [id]="columnId"
+    [cdkDropListData]="tasks"
+    [cdkDropListConnectedTo]="connectedTo"
+    (cdkDropListDropped)="onDrop($event)"
+  >
+    @for (task of filteredTasks; track task.id) {
+      <div cdkDrag [cdkDragData]="task" class="column__drag-item">
+        <bsk-task-card
+          [task]="task"
+          (deleteTask)="onDeleteTask($event)"
+          (editTask)="onEditTask($event)"
+        />
+        <!-- Drag placeholder -->
+        <div class="column__drag-placeholder" *cdkDragPlaceholder></div>
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (filteredTasks.length === 0) {
+      <div class="column__empty">
+        <span class="column__empty-icon">◌</span>
+        <span class="column__empty-text">No tasks here</span>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Edit modal -->
+@if (editingTask) {
+  <bsk-edit-task-modal
+    [task]="editingTask"
+    (close)="closeEdit()"
+  />
+}

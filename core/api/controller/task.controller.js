@@ -2,10 +2,8 @@
 
 
 
-export const createTask = async () => { 
+export const getAllTasks = async (obj) => { 
 
     
-
-
 }
 

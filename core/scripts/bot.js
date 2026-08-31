@@ -1,11 +1,30 @@
 import { Telegraf } from 'telegraf'
 import { message } from 'telegraf/filters'
+import {creatingTaskInKanban } from './create.tasks.js'
 import dotenv from 'dotenv'
 
-const createTask = (txt) => {
+const createTask = async (txt) => {
 
-const tasks = txt.split(',')
+  const tasks = txt.split(',')
 
+  const obj = {
+    title: tasks[0],
+    description: tasks[1],
+    tag: tasks[2]
+  }
+
+  if (obj?.title != null && obj?.description != null && obj?.tag != null)
+    try {
+
+      await creatingTaskInKanban(obj)
+
+      return true
+
+    } catch (err) {
+
+      throw err
+
+    }
 }
 dotenv.config()
 
@@ -23,20 +42,21 @@ bot.command('quit', async (ctx) => {
 
 bot.on(message('text'), async (context) => {
   // Explicit usage
-  try{
-  createTask(context.message.text)
+  const success = await createTask(context.message.text)
 
-  await context.reply(`Task criada com sucesso!`)
+  try {
 
-  }catch(err){
-    
+    if (success) {
+      await context.reply(`Task criada com sucesso!`)
+    }
+
+    await context.reply(`Houve um problema ao criar a task!`)
+  } catch (err) {
+    await context.reply('ERRO: ', err.message)
   }
-  
-   
 
-  // Using context shortcut
-  
-})
+}
+)
 
 bot.on('callback_query', async (ctx) => {
   // Explicit usage

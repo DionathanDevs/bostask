@@ -1,4 +1,4 @@
-import { NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import { getTasks } from './task.service.ts'
 
 export const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {

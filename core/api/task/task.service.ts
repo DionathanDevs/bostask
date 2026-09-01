@@ -4,4 +4,6 @@ export const getTasks = async () => {
 
 const result = await getTasksRepository()
 
+return result;
+
 }

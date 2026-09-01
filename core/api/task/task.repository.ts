@@ -1,5 +1,5 @@
-import { RowDataPacket } from 'mysql2/promise';
-import { conn } from '../../database/conn.js'
+import type {  RowDataPacket } from 'mysql2/promise';
+import { conn } from '../../database/conn.ts'
 
 interface Task extends RowDataPacket{
     id: number,

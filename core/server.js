@@ -1,8 +1,6 @@
-import express from 'express'
-import app from 'app.js'
+import { app } from './app.ts'
 
-const app = app
-
-app.listen(3000, () =>{
+const application = app
+application.listen(3000, () =>{
     console.log('Porta rodando no localhost:3000')
 })

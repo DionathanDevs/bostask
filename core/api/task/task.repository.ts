@@ -1,4 +1,4 @@
-import type { RowDataPacket } from 'mysql2/promise';
+import type { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 import { buildDynamicUpdate } from '../../database/builders/update.builder.ts'
 import { UpdateTaskDTO } from '../task/task.class.ts'
 import { conn } from '../../database/conn.ts'
@@ -25,21 +25,20 @@ export const getTasksRepository = async (): Promise<Task[]> => {
 
 }
 
-export const updateTasksRepository = async (params: UpdateTaskDTO, id: Number) => {
+export const updateTasksRepository = async (params: UpdateTaskDTO, id: Number): Promise<ResultSetHeader | null>  => {
 
-    const dinamicQuery = buildDynamicUpdate(params)
+    const dinamicQuery = buildDynamicUpdate(params);
 
     if (!dinamicQuery) return null;
 
-
-    const { setClauses, values } = dinamicQuery
-
+    const { setClauses, values } = dinamicQuery;
 
     const connection = conn;
 
-    const sql = `update tasks set ${setClauses} where id = ?`
+    const sql = `update tasks set ${setClauses} where id = ?`;
 
-    const [rows] = await connection.execute(sql, values)
+    const [rows] = await connection.execute(sql, [...values, id],);
 
-    return rows
+    return rows as ResultSetHeader;
+
 }

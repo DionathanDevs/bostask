@@ -1,4 +1,4 @@
-import { getTasksRepository, updateTasksRepository } from './task.repository.ts'
+import { getTasksRepository, updateTasksRepository, findTaskByIdRepository } from './task.repository.ts'
 import { buildDynamicUpdate } from '../../database/builders/update.builder.ts'
 import { Task , UpdateTaskDTO} from './task.class.ts'
 
@@ -27,5 +27,11 @@ if(result.affectedRows > 0){
 }
 
 return false;
+
+}
+
+export const findTaskById = async (id: number): Promise<Task | null> => {
+
+return await findTaskByIdRepository(id);
 
 }

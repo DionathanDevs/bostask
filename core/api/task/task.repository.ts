@@ -7,8 +7,8 @@ interface Task extends RowDataPacket {
     id: number,
     title: string,
     description: string,
-    status: string,
-    tag: string
+    status: number,
+    tag: number
 }
 
 
@@ -17,7 +17,7 @@ export const getTasksRepository = async (): Promise<Task[]> => {
 
     const connection = conn;
 
-    const sql = 'select t.id, t.title, t.description, ts.name as description_satus, tt.name as description_tag from tasks t inner join tasks_status ts on t.status = ts.id inner join tasks_tags tt on t.tag = tt.id';
+    const sql = 'select id, title, description, status, tag from tasks';
 
     const [rows] = await connection.execute<Task[]>(sql);
 
@@ -41,4 +41,19 @@ export const updateTasksRepository = async (params: UpdateTaskDTO, id: Number): 
 
     return rows as ResultSetHeader;
 
+}
+
+export const findTaskByIdRepository = async (id: number): Promise<Task | null> => {
+
+const idParam = id;
+
+const sql = 'select * from tasks where id = ?';
+
+const connection = conn
+
+const [rows] = await connection.execute(sql, [idParam]);
+
+const tasks = rows as Task[]
+
+return tasks.length > 0 ? tasks[0] : null
 }

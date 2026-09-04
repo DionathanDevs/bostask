@@ -1,5 +1,5 @@
 import { type Request, type Response, type NextFunction} from "express";
-import { getTasks, updateTask, findTaskById } from './task.service.ts'
+import { getTasks, updateTask, findTaskById, insertTask } from './task.service.ts'
 import { Task } from "./task.class.ts";
 
 export const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
@@ -74,6 +74,35 @@ export const getTaskById = async (req: Request, res: Response, next: NextFunctio
         task: task
     })
 
+    }catch(err){
+        next(err)
+    }
+
+
+}
+
+export const insertNewTask = async(req: Request, res:Response, next: NextFunction) => {
+
+    const { title, description, status, tag } = req.body
+
+    try{
+
+    if(!title || !tag || !description || !status ){
+        throw new Error('Dados obrigatorios ( title, description, tag, status ) faltando')
+    }
+
+    const taskFormat = new Task(title, description, status, tag)
+
+    const createNewTask = await insertTask(taskFormat)
+
+    if(!createNewTask){
+        throw new Error('Erro ao criar a tarefa')
+    }
+
+    return res.status(201).json({
+        success: true,
+        task: createNewTask
+    })
     }catch(err){
         next(err)
     }

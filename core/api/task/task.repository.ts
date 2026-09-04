@@ -4,7 +4,7 @@ import { UpdateTaskDTO } from '../task/task.class.ts'
 import { conn } from '../../database/conn.ts'
 
 interface Task extends RowDataPacket {
-    id: number,
+    id?: number,
     title: string,
     description: string,
     status: number,
@@ -56,4 +56,19 @@ const [rows] = await connection.execute(sql, [idParam]);
 const tasks = rows as Task[]
 
 return tasks.length > 0 ? tasks[0] : null
+}
+
+export const insertTaskRepository = async (task: Task): Promise<Task | null> => {
+   
+    
+const sql = 'INSERT INTO tasks (title, description, status, tag) VALUES (?, ?, ? ,?)'
+
+const connection = conn
+
+const [rows] = await connection.execute(sql, [task.title, task.description, task.status, task.status])
+    
+const taskCreate = rows as Task[];
+
+return taskCreate.length > 0 ? taskCreate[0] : null
+
 }

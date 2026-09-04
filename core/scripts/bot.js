@@ -3,6 +3,7 @@ import { message } from 'telegraf/filters'
 import {creatingTaskInKanban } from './create.tasks.js'
 import dotenv from 'dotenv'
 
+
 const createTask = async (txt) => {
 
   const tasks = txt.split(',')
@@ -27,7 +28,6 @@ const createTask = async (txt) => {
     }
 }
 dotenv.config()
-
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
 
@@ -47,8 +47,9 @@ bot.on(message('text'), async (context) => {
   try {
 
     if (success) {
-      await context.reply(`Task criada com sucesso!`)
+    return await context.reply(`Task criada com sucesso!`)
     }
+
 
     await context.reply(`Houve um problema ao criar a task!`)
   } catch (err) {

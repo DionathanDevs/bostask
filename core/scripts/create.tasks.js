@@ -1,4 +1,3 @@
-import {conn} from '../database/conn.js'
 
 export const creatingTaskInKanban = async (obj) =>{
 const title = String(obj.title)
@@ -10,24 +9,30 @@ if(tag = 's'){
 }else{
     tag = 2
 }
-
-
-const cc = conn
-try{
-
-const sql = 'INSERT INTO tasks (title, description, tag, status) VALUES (?, ?, ?, ?)'
-
-const [rows] = await cc.execute(sql, [title, description, tag, 1])
-
-if(rows.affectedRows > 0){
-    return true
+const objForPost = {
+    title: title,
+    description: description,
+    tag: tag,
+    status: 1
 }
 
+
+try{
+
+const url = process.env.URL_TASK
+const response = await fetch(url, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(objForPost)
+})
+
+return response
 
 }catch(err){
     throw err
-}finally{
-   await cc.end()
 }
+
 
 }

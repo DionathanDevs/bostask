@@ -53,7 +53,7 @@ export class ColumnComponent {
     this.taskDropped.emit(event);
   }
 
-  onDeleteTask(id: string): void {
+  onDeleteTask(id: number): void {
     this.taskService.deleteTask(id);
   }
 

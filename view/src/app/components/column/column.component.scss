@@ -1,9 +1,25 @@
-.column {
+:host {
   display: flex;
   flex-direction: column;
   width: 320px;
   min-width: 280px;
   height: 100%;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 86vw;
+    min-width: 86vw;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
 
   &__header {
     padding: 0 0 var(--space-2);
@@ -53,12 +69,14 @@
   // CDK Drop List
   &__body {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
-    padding: var(--space-1) 2px var(--space-2);
-    min-height: 80px;
+    padding: var(--space-1) 6px var(--space-3) 2px;
+    -webkit-overflow-scrolling: touch;
 
     &.cdk-drop-list-receiving {
       background: rgba(255, 255, 255, 0.02);
@@ -68,6 +86,7 @@
 
   &__drag-item {
     position: relative;
+    flex-shrink: 0;
   }
 
   &__drag-placeholder {
@@ -76,6 +95,7 @@
     border-radius: var(--radius-md);
     background: var(--color-surface-low);
     opacity: 0.4;
+    flex-shrink: 0;
   }
 
   // Empty state
@@ -111,15 +131,5 @@
 
   &[data-column='done'] .column__divider {
     opacity: 0.2;
-  }
-
-  // ── Mobile ───────────────────────────────────────────────
-  @media (max-width: 768px) {
-    // Each column takes ~88vw so the next one peeks slightly
-    width: 88vw;
-    min-width: 88vw;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    height: 100%;
   }
 }

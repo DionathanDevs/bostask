@@ -32,9 +32,9 @@ export class AddTaskModalComponent {
     { value: 'high',   label: '▸▸▸ High'  },
   ];
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (!this.title.trim()) return;
-    this.taskService.addTask({
+    await this.taskService.addTask({
       title:       this.title.trim(),
       description: this.description.trim() || undefined,
       tag:         this.tag,

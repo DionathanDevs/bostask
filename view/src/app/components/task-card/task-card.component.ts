@@ -11,7 +11,7 @@ import { Task, Priority, TAGS } from '../../models/task.model';
 })
 export class TaskCardComponent {
   @Input({ required: true }) task!: Task;
-  @Output() deleteTask = new EventEmitter<string>();
+  @Output() deleteTask = new EventEmitter<number>();
   @Output() editTask   = new EventEmitter<Task>();
 
   get tagLabel(): string {

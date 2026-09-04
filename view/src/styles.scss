@@ -103,18 +103,26 @@ body {
 }
 
 // ── Scrollbar styling ─────────────────────────────────────
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-stroke-muted) transparent;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-stroke-muted);
+  background-color: var(--color-stroke-muted);
   border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: padding-box;
   &:hover {
-    background: var(--color-text-low);
+    background-color: var(--color-text-low);
+    background-clip: padding-box;
   }
 }
 

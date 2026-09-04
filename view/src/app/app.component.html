@@ -29,7 +29,20 @@
 
       <!-- Kanban board -->
       <div class="app__board-wrap">
-        <bsk-board [activeTag]="activeTag()" />
+        @if (taskService.loading()) {
+          <div class="app__state">
+            <span class="app__state-icon">◌</span>
+            <span class="app__state-text">Loading tasks...</span>
+          </div>
+        } @else if (taskService.error()) {
+          <div class="app__state app__state--error">
+            <span class="app__state-icon">✕</span>
+            <span class="app__state-text">{{ taskService.error() }}</span>
+            <button class="app__state-retry" (click)="taskService.loadTasks()">Retry</button>
+          </div>
+        } @else {
+          <bsk-board [activeTag]="activeTag()" />
+        }
       </div>
     </main>
   </div>

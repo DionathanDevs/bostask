@@ -42,4 +42,32 @@ export class BoardComponent {
       this.taskService.moveTask(task.id, targetColumn);
     }
   }
+
+  onWheel(event: WheelEvent): void {
+    if (event.shiftKey) return;
+
+    // Check if the wheel event occurred over a column body that has scrollable content
+    const target = event.target as HTMLElement | null;
+    const columnBody = target?.closest('.column__body') as HTMLElement | null;
+
+    if (columnBody) {
+      const hasOverflow = columnBody.scrollHeight > columnBody.clientHeight;
+      if (hasOverflow) {
+        const canScrollUp = event.deltaY < 0 && columnBody.scrollTop > 0;
+        const canScrollDown =
+          event.deltaY > 0 &&
+          Math.ceil(columnBody.scrollTop + columnBody.clientHeight) < columnBody.scrollHeight;
+        if (canScrollUp || canScrollDown) {
+          // Allow natural vertical scroll inside the column body
+          return;
+        }
+      }
+    }
+
+    // Otherwise, translate vertical wheel scroll to horizontal board scroll
+    if (event.deltaY !== 0) {
+      const board = event.currentTarget as HTMLElement;
+      board.scrollLeft += event.deltaY;
+    }
+  }
 }

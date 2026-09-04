@@ -1,71 +1,20 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { v4 as uuidv4 } from 'uuid';
-import { Task, TagId, ColumnId, Priority } from '../models/task.model';
-
-const STORAGE_KEY = 'bostask_tasks';
-
-// ── Seed data ─────────────────────────────────────────────
-const SEED_TASKS: Task[] = [
-  {
-    id: uuidv4(),
-    title: 'Read Clean Code',
-    description: 'Chapters 1–5 before next week.',
-    tag: 'study',
-    column: 'todo',
-    priority: 'medium',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: uuidv4(),
-    title: 'Finish project report',
-    description: 'Include the Q3 metrics in the executive summary.',
-    tag: 'work',
-    column: 'inprogress',
-    priority: 'high',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: uuidv4(),
-    title: 'Morning run',
-    description: '5 km before 7 AM.',
-    tag: 'health',
-    column: 'todo',
-    priority: 'low',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: uuidv4(),
-    title: 'Angular signals deep dive',
-    description: 'Watch the official Angular devs talk on YouTube.',
-    tag: 'study',
-    column: 'done',
-    priority: 'medium',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: uuidv4(),
-    title: 'Update portfolio site',
-    description: 'Add the Bostask project with screenshots.',
-    tag: 'personal',
-    column: 'todo',
-    priority: 'low',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: uuidv4(),
-    title: 'Weekly team sync',
-    description: 'Prepare agenda and action items.',
-    tag: 'work',
-    column: 'done',
-    priority: 'high',
-    createdAt: new Date().toISOString(),
-  },
-];
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+import {
+  Task, TagId, ColumnId, Priority,
+  STATUS_TO_COLUMN, COLUMN_TO_STATUS, COLUMN_TO_STATUS_STR, TAG_NUM_TO_ID, TAG_ID_TO_NUM,
+} from '../models/task.model';
+import { ApiService } from './api.service';
+import { ApiTask } from '../models/api.model';
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {
+  private api = inject(ApiService);
+
   // ── State ──────────────────────────────────────────────
-  private _tasks = signal<Task[]>(this.loadFromStorage());
+  private _tasks = signal<Task[]>([]);
+  readonly loading  = signal(false);
+  readonly error    = signal<string | null>(null);
 
   // ── Public read ────────────────────────────────────────
   readonly tasks = this._tasks.asReadonly();
@@ -79,63 +28,96 @@ export class TaskService {
     };
   });
 
-  // ── CRUD ───────────────────────────────────────────────
-  addTask(data: Omit<Task, 'id' | 'createdAt'>): void {
-    const task: Task = {
-      ...data,
-      id: uuidv4(),
-      createdAt: new Date().toISOString(),
-    };
-    this._tasks.update(tasks => [...tasks, task]);
-    this.saveToStorage();
+  // ── Load all tasks ─────────────────────────────────────
+  async loadTasks(): Promise<void> {
+    this.loading.set(true);
+    this.error.set(null);
+    try {
+      const res = await firstValueFrom(this.api.getAllTasks());
+      if (res.success) {
+        this._tasks.set(res.tasks.map(t => this.mapFromApi(t)));
+      }
+    } catch (err) {
+      this.error.set('Failed to load tasks. Is the backend running?');
+      console.error('[TaskService] loadTasks:', err);
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  updateTask(id: string, changes: Partial<Omit<Task, 'id' | 'createdAt'>>): void {
+  // ── Add task ───────────────────────────────────────────
+  async addTask(data: Omit<Task, 'id' | 'createdAt'>): Promise<void> {
+    this.loading.set(true);
+    try {
+      await firstValueFrom(this.api.insertTask({
+        title:       data.title,
+        description: data.description ?? '',
+        status:      COLUMN_TO_STATUS_STR[data.column],
+        tag:         data.tag === 'all' ? 'work' : data.tag,
+      }));
+      // Refresh list from server to get the real DB id
+      await this.loadTasks();
+    } catch (err) {
+      this.error.set('Failed to create task.');
+      console.error('[TaskService] addTask:', err);
+      this.loading.set(false);
+    }
+  }
+
+  // ── Update task ────────────────────────────────────────
+  async updateTask(id: number, changes: Partial<Omit<Task, 'id' | 'createdAt'>>): Promise<void> {
+    // Optimistic update
     this._tasks.update(tasks =>
       tasks.map(t => (t.id === id ? { ...t, ...changes } : t))
     );
-    this.saveToStorage();
+
+    try {
+      const payload: Record<string, unknown> = {};
+      if (changes.title       !== undefined) payload['title']       = changes.title;
+      if (changes.description !== undefined) payload['description'] = changes.description;
+      if (changes.column      !== undefined) payload['status']      = COLUMN_TO_STATUS[changes.column];
+      if (changes.tag         !== undefined) payload['tag']         = TAG_ID_TO_NUM[changes.tag] ?? 1;
+
+      await firstValueFrom(this.api.updateTask(id, { task: payload, id }));
+    } catch (err) {
+      this.error.set('Failed to update task.');
+      console.error('[TaskService] updateTask:', err);
+      // Rollback — re-fetch from server
+      await this.loadTasks();
+    }
   }
 
-  deleteTask(id: string): void {
+  // ── Delete task (local-only — no DELETE route in backend yet) ─
+  deleteTask(id: number): void {
     this._tasks.update(tasks => tasks.filter(t => t.id !== id));
-    this.saveToStorage();
   }
 
-  moveTask(id: string, newColumn: ColumnId): void {
-    this.updateTask(id, { column: newColumn });
+  // ── Move task (column change → PATCH status) ───────────
+  async moveTask(id: number, newColumn: ColumnId): Promise<void> {
+    await this.updateTask(id, { column: newColumn });
   }
 
-  reorderColumn(column: ColumnId, orderedIds: string[]): void {
+  // ── Reorder within column (local-only) ─────────────────
+  reorderColumn(column: ColumnId, orderedIds: number[]): void {
     this._tasks.update(tasks => {
-      const others = tasks.filter(t => t.column !== column);
+      const others    = tasks.filter(t => t.column !== column);
       const reordered = orderedIds
         .map(id => tasks.find(t => t.id === id))
         .filter((t): t is Task => t !== undefined);
       return [...others, ...reordered];
     });
-    this.saveToStorage();
   }
 
-  filterByTag(tag: TagId): Task[] {
-    if (tag === 'all') return this._tasks();
-    return this._tasks().filter(t => t.tag === tag);
-  }
-
-  // ── Persistence ────────────────────────────────────────
-  private loadFromStorage(): Task[] {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw) as Task[];
-    } catch {
-      // ignore parse errors
-    }
-    // First run: seed with demo data
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED_TASKS));
-    return SEED_TASKS;
-  }
-
-  private saveToStorage(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this._tasks()));
+  // ── Mapping: ApiTask → Task ────────────────────────────
+  private mapFromApi(apiTask: ApiTask): Task {
+    return {
+      id:          apiTask.id,
+      title:       apiTask.title,
+      description: apiTask.description || undefined,
+      tag:         TAG_NUM_TO_ID[apiTask.tag] ?? 'other',
+      column:      STATUS_TO_COLUMN[apiTask.status] ?? 'todo',
+      priority:    'medium',   // backend has no priority field yet
+      createdAt:   new Date().toISOString(),
+    };
   }
 }

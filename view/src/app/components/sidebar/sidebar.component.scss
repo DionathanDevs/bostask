@@ -1,3 +1,15 @@
+:host {
+  display: flex;
+  height: 100%;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
 .sidebar {
   width: var(--sidebar-width);
   height: 100%;

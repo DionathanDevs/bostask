@@ -40,9 +40,9 @@ export class EditTaskModalComponent implements OnInit {
     this.priority    = this.task.priority;
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (!this.title.trim()) return;
-    this.taskService.updateTask(this.task.id, {
+    await this.taskService.updateTask(this.task.id, {
       title:       this.title.trim(),
       description: this.description.trim() || undefined,
       tag:         this.tag,

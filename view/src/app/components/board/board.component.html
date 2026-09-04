@@ -1,4 +1,4 @@
-<div class="board">
+<div class="board" (wheel)="onWheel($event)">
   <bsk-column
     [columnId]="'todo'"
     [tasks]="tasksByColumn.todo"

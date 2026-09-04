@@ -1,5 +1,6 @@
-import { type Request, type Response, type NextFunction } from "express";
+import { type Request, type Response, type NextFunction} from "express";
 import { getTasks, updateTask, findTaskById } from './task.service.ts'
+import { Task } from "./task.class.ts";
 
 export const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -44,4 +45,38 @@ export const updateOneTask = async (req: Request, res: Response, next: NextFunct
     } catch (err) {
         next(err);
     }
+}
+
+export const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
+
+    const id = req.params
+
+    try{
+
+    if(!id){
+        throw new Error('ID nao informado')
+    }
+
+    const idParsedInt: number = Number(id)
+
+    if(!idParsedInt || Number.isNaN(idParsedInt)){
+        throw new Error('Erro ao tratar dados enviados')
+    }
+
+    const task: Task | null = await findTaskById(idParsedInt)
+    
+    if(!task){
+        throw new Error('Erro ao buscar tarefa')
+    }
+
+    return res.status(200).json({
+        success: true,
+        task: task
+    })
+
+    }catch(err){
+        next(err)
+    }
+
+
 }

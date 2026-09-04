@@ -1,7 +1,7 @@
 import { getTasksRepository, updateTasksRepository, findTaskByIdRepository, insertTaskRepository } from './task.repository.ts'
 import { buildDynamicUpdate } from '../../database/builders/update.builder.ts'
-import { Task, UpdateTaskDTO } from './task.class.ts'
-import { TAG } from '../../util/const.ts'
+import { Task, type UpdateTaskDTO } from './task.class.ts'
+import { TAG , STATUS } from '../../util/const.ts'
 
 
 
@@ -37,7 +37,7 @@ export const findTaskById = async (id: number): Promise<Task | null> => {
 
 }
 
-export const insertTask = async (title: string, description: string, tag: string, status: string): Promise<Task | null> => {
+export const insertTask = async (title: string, description: string, tag: string, status: string): Promise< Boolean > => {
 
     if (!title || !tag || !description || !status) {
         throw new Error('Dados obrigatorios ( title, description, tag, status ) faltando')
@@ -45,15 +45,24 @@ export const insertTask = async (title: string, description: string, tag: string
 
     const titleParsed = String(title).trim()
     let tagParsed: number = 1
-
     tagParsed = resolveToTag(tag)
+    const descriptionParsed = String(description).trim()
+    let statusParsed: number = 1
+    statusParsed = resolveToStatus(status)
 
-    const taskFormat = new Task(title, description, status, tag)
+    const taskFormat = new Task(titleParsed, descriptionParsed, statusParsed, tagParsed)
 
+    const createTask = await insertTaskRepository(taskFormat)
+
+    if(createTask.affectedRows > 0){
+        return true;
+    }
+
+    return false;
 }
 
 
-const resolveToTag: number = (tag: string) => {
+const resolveToTag = (tag: string) : number => {
 
   if (tag == "work") {
 
@@ -65,6 +74,18 @@ const resolveToTag: number = (tag: string) => {
 
     return Number(TAG.study)
     }
+
+    return 1
+
+}
+
+const resolveToStatus = (status: string): number => {
+
+    if (status == "new") return Number(STATUS.completed)
+
+    if(status == "pending") return Number(STATUS.completed)
+
+    if(status == "completed") return Number(STATUS.completed)
 
     return 1
 

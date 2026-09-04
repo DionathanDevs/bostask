@@ -87,13 +87,7 @@ export const insertNewTask = async(req: Request, res:Response, next: NextFunctio
 
     try{
 
-    if(!title || !tag || !description || !status ){
-        throw new Error('Dados obrigatorios ( title, description, tag, status ) faltando')
-    }
-
-    const taskFormat = new Task(title, description, status, tag)
-
-    const createNewTask = await insertTask(taskFormat)
+    const createNewTask = await insertTask(title, description, status, tag)
 
     if(!createNewTask){
         throw new Error('Erro ao criar a tarefa')
@@ -101,8 +95,9 @@ export const insertNewTask = async(req: Request, res:Response, next: NextFunctio
 
     return res.status(201).json({
         success: true,
-        task: createNewTask
+        message: "Task criado com sucesso!"
     })
+
     }catch(err){
         next(err)
     }

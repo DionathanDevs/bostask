@@ -1,15 +1,8 @@
 import type { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 import { buildDynamicUpdate } from '../../database/builders/update.builder.ts'
-import { UpdateTaskDTO } from '../task/task.class.ts'
 import { conn } from '../../database/conn.ts'
+import { Task , type UpdateTaskDTO} from './task.class.ts'
 
-interface Task extends RowDataPacket {
-    id?: number,
-    title: string,
-    description: string,
-    status: number,
-    tag: number
-}
 
 
 
@@ -19,9 +12,9 @@ export const getTasksRepository = async (): Promise<Task[]> => {
 
     const sql = 'select id, title, description, status, tag from tasks';
 
-    const [rows] = await connection.execute<Task[]>(sql);
+    const [rows] = await connection.execute(sql);
 
-    return rows;
+    return rows as Task[];
 
 }
 
@@ -58,7 +51,7 @@ const tasks = rows as Task[]
 return tasks.length > 0 ? tasks[0] : null
 }
 
-export const insertTaskRepository = async (task: Task): Promise<Task | null> => {
+export const insertTaskRepository = async (task: Task): Promise< ResultSetHeader > => {
    
     
 const sql = 'INSERT INTO tasks (title, description, status, tag) VALUES (?, ?, ? ,?)'
@@ -66,9 +59,7 @@ const sql = 'INSERT INTO tasks (title, description, status, tag) VALUES (?, ?, ?
 const connection = conn
 
 const [rows] = await connection.execute(sql, [task.title, task.description, task.status, task.status])
-    
-const taskCreate = rows as Task[];
 
-return taskCreate.length > 0 ? taskCreate[0] : null
+return rows as ResultSetHeader
 
 }

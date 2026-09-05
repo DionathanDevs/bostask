@@ -1,4 +1,4 @@
-import { getTasksRepository, updateTasksRepository, findTaskByIdRepository, insertTaskRepository } from './task.repository.ts'
+import { getTasksRepository, updateTasksRepository, findTaskByIdRepository, insertTaskRepository, deleteTaskRepository } from './task.repository.ts'
 import { buildDynamicUpdate } from '../../database/builders/update.builder.ts'
 import { Task, type UpdateTaskDTO } from './task.class.ts'
 import { TAG , STATUS } from '../../util/const.ts'
@@ -89,4 +89,22 @@ const resolveToStatus = (status: string): number => {
 
     return 1
 
+}
+
+
+export const deleteById = async (id: number) =>{
+
+const existsTask = findTaskById(id)
+
+if(!existsTask){
+    throw new Error('Task nao encotrada')
+}
+
+const deleted = await deleteTaskRepository(id)
+
+if(!deleted){
+    throw new Error('Erro ao deletar tarefa')
+}
+
+return true;
 }

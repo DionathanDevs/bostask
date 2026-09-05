@@ -36,4 +36,10 @@ export class ApiService {
   updateTask(id: number, payload: UpdateTaskPayload): Observable<MutationResponse> {
     return this.http.patch<MutationResponse>(`${BASE}/${id}`, payload);
   }
+
+  // DELETE /task/:id
+  deleteTask(id: number): Observable<MutationResponse> {
+    return this.http.delete<MutationResponse>(`${BASE}/${id}`);
+  }
 }
+

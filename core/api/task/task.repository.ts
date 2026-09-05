@@ -65,7 +65,7 @@ return rows as ResultSetHeader
 
 export const deleteTaskRepository = async (id: number) => {
 
-const sql = 'delete * from tasks where id = ?';
+const sql = 'delete from tasks where id = ?';
 
 const connection = conn;
 

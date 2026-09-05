@@ -34,13 +34,14 @@ export const updateOneTask = async (req: Request, res: Response, next: NextFunct
         const update = await updateTask(task, id);
 
         if (!update) {
-            return res.status(200).json({
+           throw new Error('Erro ao atualizar os dados');
+        }
+        
+        return res.status(200).json({
                 success: true,
                 message: 'Dados atualizados com sucesso!'
             });
-        }
-
-        throw new Error('Erro ao atualizar os dados');
+   
 
     } catch (err) {
         next(err);
@@ -107,11 +108,13 @@ export const insertNewTask = async(req: Request, res:Response, next: NextFunctio
 
 export const deleteOneTask = async ( req: Request, res: Response, next: NextFunction )  => {
 
-const id = req.params
+const { id }  = req.params
 
 try{
 
-const response = await deleteById(Number(id))    
+const idParsed = Number(id)
+
+const response = await deleteById(idParsed)    
 
 if(!response){
     throw new Error('Erro ao deletar tarefa');

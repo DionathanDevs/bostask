@@ -87,9 +87,20 @@ export class TaskService {
     }
   }
 
-  // ── Delete task (local-only — no DELETE route in backend yet) ─
-  deleteTask(id: number): void {
+  // ── Delete task ────────────────────────────────────────
+  async deleteTask(id: number): Promise<void> {
+    // Optimistic update
+    const previous = this._tasks();
     this._tasks.update(tasks => tasks.filter(t => t.id !== id));
+
+    try {
+      await firstValueFrom(this.api.deleteTask(id));
+    } catch (err) {
+      this.error.set('Failed to delete task.');
+      console.error('[TaskService] deleteTask:', err);
+      // Rollback
+      this._tasks.set(previous);
+    }
   }
 
   // ── Move task (column change → PATCH status) ───────────

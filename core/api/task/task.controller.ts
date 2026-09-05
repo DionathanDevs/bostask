@@ -1,5 +1,5 @@
 import { type Request, type Response, type NextFunction} from "express";
-import { getTasks, updateTask, findTaskById, insertTask } from './task.service.ts'
+import { getTasks, updateTask, findTaskById, insertTask, deleteById } from './task.service.ts'
 import { Task } from "./task.class.ts";
 
 export const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
@@ -102,5 +102,25 @@ export const insertNewTask = async(req: Request, res:Response, next: NextFunctio
         next(err)
     }
 
+
+}
+
+export const deleteOneTask = async ( req: Request, res: Response, next: NextFunction )  => {
+
+const id = req.params
+
+try{
+
+const response = await deleteById(Number(id))    
+
+if(!response){
+    throw new Error('Erro ao deletar tarefa');
+}
+
+return res.status(200).json({success: true, message: "Task deletada com sucesso!"})
+
+}catch(err){
+    next(err)
+}
 
 }

@@ -5,7 +5,6 @@ import { Task , type UpdateTaskDTO} from './task.class.ts'
 
 
 
-
 export const getTasksRepository = async (): Promise<Task[]> => {
 
     const connection = conn;
@@ -61,5 +60,17 @@ const connection = conn
 const [rows] = await connection.execute(sql, [task.title, task.description, task.status, task.status])
 
 return rows as ResultSetHeader
+
+}
+
+export const deleteTaskRepository = async (id: number) => {
+
+const sql = 'delete * from tasks where id = ?';
+
+const connection = conn;
+
+const [rows] = await connection.execute(sql,[id]);
+
+return rows as ResultSetHeader;
 
 }

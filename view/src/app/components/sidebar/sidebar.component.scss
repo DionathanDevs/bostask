@@ -105,10 +105,20 @@
   }
 
   &__footer-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: 11px;
     color: var(--color-text-low);
     font-family: var(--font-headline);
     letter-spacing: -0.01em;
+  }
+
+  &__footer-logo {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    border-radius: 2px;
   }
 
   // ── Mobile ─────────────────────────────────────────────

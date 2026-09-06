@@ -13,13 +13,14 @@
   &__logo {
     display: flex;
     align-items: center;
-    gap: var(--space-1);
+    gap: var(--space-2);
   }
 
-  &__logo-mark {
-    font-size: 20px;
-    color: var(--color-text-high);
-    line-height: 1;
+  &__logo-img {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+    display: block;
   }
 
   &__logo-text {
@@ -77,8 +78,8 @@
       font-size: 16px;
     }
 
-    &__logo-mark {
-      font-size: 17px;
+    &__logo-img {
+      height: 28px;
     }
 
     &__theme-btn {

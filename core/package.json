@@ -1,4 +1,12 @@
 {
+  "name": "botask-core",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node --experimental-strip-types server.js",
+    "dev": "node --watch --experimental-strip-types server.js",
+    "bot": "node scripts/bot.js"
+  },
   "dependencies": {
     "dotenv": "17.4.2",
     "express": "5.2.1",
